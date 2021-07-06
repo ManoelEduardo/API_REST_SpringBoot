@@ -3,7 +3,6 @@ package com.personapi.service;
 import com.personapi.dto.request.PersonDTO;
 import com.personapi.dto.response.MessageResponseDTO;
 import com.personapi.entity.Person;
-import com.personapi.mapper.PersonMapper;
 import com.personapi.repository.PersonRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,29 +21,26 @@ public class PersonServiceTest {
     @Mock
     private PersonRepository personRepository;
 
-    @Mock
-    private PersonMapper personMapper;
-
     @InjectMocks
     private PersonService personService;
 
     @Test
-    void testGivenPersonDTOThenReturnSuccessSavedMessage() {
+    void testGivenPersonDTOThenReturnSavedMessage() {
         PersonDTO personDTO = createFakeDTO();
         Person expectedSavedPerson = createFakeEntity();
 
-        when(personMapper.toModel(personDTO)).thenReturn(expectedSavedPerson);
         when(personRepository.save(any(Person.class))).thenReturn(expectedSavedPerson);
 
-        MessageResponseDTO expectedSuccessMessage = createExpectedSuccessMessage(expectedSavedPerson.getId());
-        MessageResponseDTO successMessage = personService.createPerson(personDTO);
+        MessageResponseDTO expectedSuccessMessage = createExpectedMessageResponse(expectedSavedPerson.getId());
+        MessageResponseDTO succesMessage = personService.createPerson(personDTO);
 
-        assertEquals(expectedSuccessMessage, successMessage);
+        assertEquals(expectedSuccessMessage, succesMessage);
     }
 
-    private MessageResponseDTO createExpectedSuccessMessage(Long id) {
-        return MessageResponseDTO.builder()
-                .message("Person successfully created with ID " + id)
+    private MessageResponseDTO createExpectedMessageResponse(Long id) {
+        return MessageResponseDTO
+                .builder()
+                .message("Created person with ID " + id)
                 .build();
     }
 
